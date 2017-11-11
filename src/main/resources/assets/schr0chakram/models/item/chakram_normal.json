@@ -1,0 +1,6 @@
+{
+    "parent": "item/handheld",
+    "textures": {
+        "layer0": "schr0chakram:items/chakram_normal"
+    }
+}
