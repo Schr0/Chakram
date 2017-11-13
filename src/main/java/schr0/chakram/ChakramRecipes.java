@@ -29,7 +29,7 @@ public class ChakramRecipes
 				"ZX ",
 
 				'X', new ItemStack(Items.IRON_INGOT),
-				'Y', new ItemStack(Items.QUARTZ),
+				'Y', new ItemStack(Items.ENDER_PEARL),
 				'Z', new ItemStack(Items.LEATHER),
 
 		}).setRegistryName(RES_CHAKRAM_NORMAL);

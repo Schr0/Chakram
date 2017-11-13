@@ -147,7 +147,10 @@ public abstract class ItemChakram extends Item
 	@Override
 	public boolean hitEntity(ItemStack stack, EntityLivingBase target, EntityLivingBase attacker)
 	{
-		stack.damageItem(1, attacker);
+		if (!attacker.world.isRemote)
+		{
+			stack.damageItem(1, attacker);
+		}
 
 		return true;
 	}
@@ -194,9 +197,10 @@ public abstract class ItemChakram extends Item
 		if (usingCount % 20 == 0)
 		{
 			EntityPlayer entityPlayer = (EntityPlayer) player;
-			int chageAmmount = this.getChageAmmount(EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, stack), usingCount);
 
 			entityPlayer.addExhaustion(0.15F);
+
+			int chageAmmount = this.getChageAmmount(EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, stack), usingCount);
 
 			if (chageAmmount == CHAGE_AMOUNT_MAX)
 			{

@@ -25,6 +25,7 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.server.management.PreYggdrasilConverter;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
@@ -32,7 +33,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -130,6 +130,8 @@ public class EntityChakram extends Entity
 	@Override
 	public void readEntityFromNBT(NBTTagCompound compound)
 	{
+		boolean isDead = false;
+
 		if (compound.hasKey(TAG_MOTION_XYZ))
 		{
 			NBTTagList nbttaglist = compound.getTagList(TAG_MOTION_XYZ, 6);
@@ -143,7 +145,7 @@ public class EntityChakram extends Entity
 		}
 		else
 		{
-			this.setDead();
+			isDead = true;
 		}
 
 		if (compound.hasKey(TAG_ACCELERATION_XYZ))
@@ -175,16 +177,28 @@ public class EntityChakram extends Entity
 			{
 				this.setOwnerUUID(UUID.fromString(ownerUUID));
 			}
-			catch (Throwable var4)
+			catch (Throwable e)
 			{
-				this.setDead();
+				isDead = true;
 			}
 		}
 
-		this.setEntityItem(new ItemStack(compound.getCompoundTag(TAG_ITEM)));
+		ItemStack stack = new ItemStack(compound.getCompoundTag(TAG_ITEM));
+
+		if (stack.isEmpty())
+		{
+			isDead = true;
+		}
+
+		this.setEntityItem(stack);
 		this.setReturnOwner(compound.getByte(TAG_RETURN_OWNER) == 1);
 		this.setChageAmount(compound.getByte(TAG_CHAGE_AMMOUNT));
 		this.setAge(compound.getByte(TAG_AGE));
+
+		if (isDead)
+		{
+			this.setDead();
+		}
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -364,6 +378,8 @@ public class EntityChakram extends Entity
 
 			if (isMaxThrowDistance || isReflectiveBlock)
 			{
+				this.motionX = this.motionY = this.motionZ = 0.0D;
+				this.accelerationX = this.accelerationY = this.accelerationZ = 0.0D;
 				this.setReturnOwner(true);
 
 				return;
@@ -440,7 +456,7 @@ public class EntityChakram extends Entity
 
 			return (uuid == null) ? null : this.world.getPlayerEntityByUUID(uuid);
 		}
-		catch (IllegalArgumentException var2)
+		catch (IllegalArgumentException e)
 		{
 			return null;
 		}
@@ -468,11 +484,6 @@ public class EntityChakram extends Entity
 
 	public void setReturnOwner(boolean isReturnOwner)
 	{
-		if (isReturnOwner)
-		{
-			this.motionX = this.motionY = this.motionZ = 0.0D;
-		}
-
 		this.isReturnOwner = isReturnOwner;
 	}
 
@@ -509,13 +520,13 @@ public class EntityChakram extends Entity
 		}
 
 		EntityPlayer player = (EntityPlayer) this.getOwner();
-		ItemStack srcStack = player.getHeldItemMainhand();
+		ItemStack srcStack = player.getHeldItemMainhand().copy();
 		IAttributeInstance attackDamageAttribute = player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
-
 		ItemStack entityStack = this.getEntityItem();
 		Multimap<String, AttributeModifier> entityStackAttributeModifiers = entityStack.getAttributeModifiers(EntityEquipmentSlot.MAINHAND);
 
-		FMLLog.info("pre : %f", (float) player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue());
+		// FMLLog.info("pre : %f", (float) player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue());
+
 		player.setHeldItem(EnumHand.MAIN_HAND, entityStack);
 		player.getAttributeMap().applyAttributeModifiers(entityStackAttributeModifiers);
 
@@ -523,14 +534,23 @@ public class EntityChakram extends Entity
 
 		attackDamageAttribute.applyModifier(boostAttackAttributeModifier);
 
-		player.attackTargetEntityWithCurrentItem(target);
-		FMLLog.info("hit : %f", (float) player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue());
+		// FMLLog.info("hit : %f", (float) player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue());
+
+		try
+		{
+			player.attackTargetEntityWithCurrentItem(target);
+		}
+		catch (Throwable e)
+		{
+			target.attackEntityFrom(DamageSource.causePlayerDamage(player), (float) attackDamageAttribute.getAttributeValue());
+		}
 
 		attackDamageAttribute.removeModifier(boostAttackAttributeModifier);
 
 		player.getAttributeMap().removeAttributeModifiers(entityStackAttributeModifiers);
 		player.setHeldItem(EnumHand.MAIN_HAND, srcStack);
-		FMLLog.info("post : %f", (float) player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue());
+
+		// FMLLog.info("post : %f", (float) player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue());
 	}
 
 	private float getThrowDistance()
@@ -559,19 +579,19 @@ public class EntityChakram extends Entity
 	private AttributeModifier getBoostAttackAttributeModifier(float srcAttackDamage)
 	{
 		float boostAmount = 1.0F + ((float) this.getChageAmount() / 10);
-		float entityAttackDamage = (srcAttackDamage * boostAmount);
+		float boostAttackDamage = (srcAttackDamage * boostAmount);
 
-		return new AttributeModifier(BOOST_MODIFIER, (entityAttackDamage - srcAttackDamage), 0);
+		return new AttributeModifier(BOOST_MODIFIER, (boostAttackDamage - srcAttackDamage), 0);
 	}
 
 	private static boolean isOwnerNotExists(EntityPlayer player, EntityChakram entity)
 	{
-		if (player == null || (player != null && player.isDead) || entity == null || (entity != null && entity.isDead))
+		if (player == null || entity == null || (player != null && player.isDead) || (entity != null && entity.isDead))
 		{
 			return true;
 		}
 
-		return (!entity.world.isBlockLoaded(entity.getPosition()));
+		return (!entity.world.isBlockLoaded(new BlockPos(entity)));
 	}
 
 	private static boolean isReflectiveBlock(World world, BlockPos pos)
