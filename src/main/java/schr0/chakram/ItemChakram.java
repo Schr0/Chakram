@@ -34,12 +34,9 @@ public abstract class ItemChakram extends Item
 
 	private static final String CHAKRAM_MODIFIER = "Chakram modifier";
 
-	private static final int USING_COUNT_MIN = (1 * 20);
-
+	private static final int CHAGE_INTERVAL = 25;
 	private static final int CHAGE_AMOUNT_MIN = 1;
 	private static final int CHAGE_AMOUNT_MAX = 10;
-
-	private static final int CHAGE_INTERVAL = (20 / 2);
 
 	private final float damageVsEntity;
 	private final int enchantability;
@@ -170,11 +167,9 @@ public abstract class ItemChakram extends Item
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn)
 	{
-		ItemStack stack = playerIn.getHeldItem(handIn);
-
 		playerIn.setActiveHand(handIn);
 
-		return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, stack);
+		return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, playerIn.getHeldItem(handIn));
 	}
 
 	@Override
@@ -189,12 +184,7 @@ public abstract class ItemChakram extends Item
 
 		int usingCount = this.getUsingCount(stack, count);
 
-		if (usingCount < USING_COUNT_MIN)
-		{
-			return;
-		}
-
-		if (usingCount % 20 == 0)
+		if ((0 < usingCount) && (usingCount % 20 == 0))
 		{
 			EntityPlayer entityPlayer = (EntityPlayer) player;
 
@@ -225,15 +215,10 @@ public abstract class ItemChakram extends Item
 			return;
 		}
 
-		int usingCount = this.getUsingCount(stack, timeLeft);
-
-		if (usingCount < USING_COUNT_MIN)
-		{
-			return;
-		}
-
 		EntityPlayer player = (EntityPlayer) entityLiving;
-		EntityChakram entityChakram = new EntityChakram(worldIn, player, stack, this.getChageAmmount(EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, stack), usingCount));
+		int usingCount = this.getUsingCount(stack, timeLeft);
+		int chageAmmount = this.getChageAmmount(EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, stack), usingCount);
+		EntityChakram entityChakram = new EntityChakram(worldIn, player, stack, chageAmmount);
 
 		entityChakram.setHeadingFromOwner(player);
 
@@ -242,6 +227,8 @@ public abstract class ItemChakram extends Item
 		player.getCooldownTracker().setCooldown(this, CHAGE_INTERVAL);
 
 		player.addStat(StatList.getObjectUseStats(this));
+
+		player.addExhaustion(0.20F);
 
 		player.inventory.deleteStack(stack);
 
