@@ -216,6 +216,7 @@ public abstract class ItemChakram extends Item
 		}
 
 		EntityPlayer player = (EntityPlayer) entityLiving;
+
 		int usingCount = this.getUsingCount(stack, timeLeft);
 		int chageAmmount = this.getChageAmmount(EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, stack), usingCount);
 		EntityChakram entityChakram = new EntityChakram(worldIn, player, stack, chageAmmount);

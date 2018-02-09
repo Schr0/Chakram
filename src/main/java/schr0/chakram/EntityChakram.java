@@ -32,7 +32,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -40,13 +39,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class EntityChakram extends Entity
 {
 
-	private static final String BOOST_MODIFIER = "Boost modifier";
-
 	private static final int TICKS_INTERVAL = 25;
+	private static final int AGE_MAX = (30 * 20);
 	private static final float SPEED_MIN = 0.85F;
 	private static final float SPEED_MAX = 1.85F;
 	private static final float DISTANCE_MIN = 6.4F;
 	private static final float DISTANCE_MAX = 64.0F;
+
+	private static final String BOOST_MODIFIER = "Boost modifier";
 
 	private static final String TAG = Chakram.MOD_ID + ".";
 	private static final String TAG_MOTION_XYZ = TAG + "motion_xyz";
@@ -62,6 +62,7 @@ public class EntityChakram extends Entity
 	private double accelerationZ;
 	private static final DataParameter<Optional<UUID>> OWNER_UUID = EntityDataManager.<Optional<UUID>> createKey(EntityTameable.class, DataSerializers.OPTIONAL_UNIQUE_ID);
 	private static final DataParameter<ItemStack> ITEM = EntityDataManager.<ItemStack> createKey(EntityChakram.class, DataSerializers.ITEM_STACK);
+
 	private boolean isReturnOwner;
 	private int chageAmmount;
 	private int age;
@@ -336,7 +337,12 @@ public class EntityChakram extends Entity
 		{
 			if (rayTraceResult.entityHit != null)
 			{
-				this.onHitEntity(rayTraceResult.entityHit);
+				Entity entity = rayTraceResult.entityHit;
+
+				if (!this.isOwner(entity))
+				{
+					this.onHitEntity(entity);
+				}
 			}
 			else
 			{
@@ -439,11 +445,16 @@ public class EntityChakram extends Entity
 		}
 	}
 
-	public boolean isOwner(EntityPlayer player)
+	public boolean isOwner(Entity owner)
 	{
-		if (player.getUniqueID().equals(this.getOwner().getUniqueID()))
+		if (owner instanceof EntityPlayer)
 		{
-			return true;
+			EntityPlayer player = (EntityPlayer) owner;
+
+			if (player.getUniqueID().equals(this.getOwner().getUniqueID()))
+			{
+				return true;
+			}
 		}
 
 		return false;
@@ -481,7 +492,7 @@ public class EntityChakram extends Entity
 
 	public int getMaxAge()
 	{
-		return (60 * 20);
+		return AGE_MAX;
 	}
 
 	public void setAge(int age)
@@ -539,7 +550,7 @@ public class EntityChakram extends Entity
 		}
 		catch (IllegalArgumentException e)
 		{
-			player.sendMessage(new TextComponentString(this.getClass() + " でバグ発生中！ 楽しく遊んでるのにごめんね！ 報告してくれると助かります！"));
+			Chakram.instance.infoBugMessage(player, this.getClass());
 		}
 
 		attackDamageAttribute.removeModifier(boostAttackAttributeModifier);

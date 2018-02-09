@@ -32,7 +32,7 @@ public class RenderChakram extends Render<EntityChakram>
 		GlStateManager.enableRescaleNormal();
 
 		float rotationX = 90.0F;
-		float rotationZ = -(((float) entity.ticksExisted + partialTicks) * 50);
+		float rotationZ = getRotationaSpeed(entity.ticksExisted + partialTicks);
 		GlStateManager.rotate(rotationX, 1.0F, 0.0F, 0.0F);
 		GlStateManager.rotate(rotationZ, 0.0F, 0.0F, 1.0F);
 
@@ -52,7 +52,7 @@ public class RenderChakram extends Render<EntityChakram>
 			GlStateManager.enableOutlineMode(this.getTeamColor(entity));
 		}
 
-		this.itemRenderer.renderItem(this.getStackToRender(entity), ItemCameraTransforms.TransformType.GROUND);
+		this.itemRenderer.renderItem(getStackToRender(entity), ItemCameraTransforms.TransformType.GROUND);
 
 		if (this.renderOutlines)
 		{
@@ -71,7 +71,12 @@ public class RenderChakram extends Render<EntityChakram>
 		return TextureMap.LOCATION_BLOCKS_TEXTURE;
 	}
 
-	private ItemStack getStackToRender(EntityChakram entity)
+	private static float getRotationaSpeed(float ticks)
+	{
+		return (ticks * 100);
+	}
+
+	private static ItemStack getStackToRender(EntityChakram entity)
 	{
 		return entity.getEntityItem();
 	}
