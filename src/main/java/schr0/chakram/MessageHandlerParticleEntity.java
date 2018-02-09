@@ -79,13 +79,13 @@ public class MessageHandlerParticleEntity implements IMessageHandler<MessagePart
 
 	private static void particleEntityUpdate(World world, Entity entity, Random random)
 	{
-		for (int count = 0; count < 10; count++)
+		for (int count = 0; count < 5; count++)
 		{
 			double pX = entity.posX + (double) (random.nextFloat() * entity.width * 2.0F) - (double) entity.width;
 			double pY = entity.posY + (double) (random.nextFloat() * entity.height);
 			double pZ = entity.posZ + (double) (random.nextFloat() * entity.width * 2.0F) - (double) entity.width;
 
-			world.spawnParticle(EnumParticleTypes.ENCHANTMENT_TABLE, pX, pY, pZ, 0.0D, 0.0D, 0.0D, new int[0]);
+			world.spawnParticle(EnumParticleTypes.CRIT, pX, pY, pZ, 0.0D, 0.0D, 0.0D, new int[0]);
 		}
 	}
 

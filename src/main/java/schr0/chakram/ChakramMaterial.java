@@ -3,7 +3,7 @@ package schr0.chakram;
 public enum ChakramMaterial
 {
 
-	NORMAL(300, 5.0F, 15);
+	NORMAL(500, 5.0F, 15);
 
 	private final int maxUses;
 	private final float damageVsEntity;

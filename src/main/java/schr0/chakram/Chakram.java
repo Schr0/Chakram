@@ -1,7 +1,9 @@
 package schr0.chakram;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
@@ -19,6 +21,9 @@ import net.minecraftforge.registries.IForgeRegistry;
 @Mod(modid = Chakram.MOD_ID, name = Chakram.MOD_NAME, version = Chakram.MOD_VERSION)
 public class Chakram
 {
+
+	@Mod.Instance(Chakram.MOD_ID)
+	public static Chakram instance;
 
 	/**
 	 * ModのID.
@@ -39,9 +44,6 @@ public class Chakram
 	 * ResourceLocationのDomain.
 	 */
 	public static final String MOD_RESOURCE_DOMAIN = MOD_ID + ":";
-
-	@Mod.Instance(Chakram.MOD_ID)
-	public static Chakram instance;
 
 	/**
 	 * 初期・設定イベント.
@@ -139,6 +141,14 @@ public class Chakram
 		IForgeRegistry<IRecipe> registry = event.getRegistry();
 
 		(new ChakramRecipes()).registerRecipes(registry);
+	}
+
+	/**
+	 * バグメッセージ.
+	 */
+	public static void infoBugMessage(EntityPlayer player, Class bugClass)
+	{
+		player.sendMessage(new TextComponentString(bugClass + " でバグ発生中！ 楽しく遊んでるのに、ごめんね！ 報告してくれると助かります！"));
 	}
 
 }
