@@ -11,7 +11,7 @@ public class ChakramRecipes
 {
 
 	public static final String KEY_RES = Chakram.MOD_ID;
-	public static final ResourceLocation RES_CHAKRAM_NORMAL = new ResourceLocation(KEY_RES, "chakram_normal");
+	public static final ResourceLocation RES_CHAKRAM_NORMAL = new ResourceLocation(KEY_RES, ChakramItems.NAME_CHAKRAM_NORMAL);
 
 	public void registerRecipes(IForgeRegistry<IRecipe> registry)
 	{

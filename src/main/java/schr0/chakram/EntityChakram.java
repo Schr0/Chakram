@@ -13,6 +13,7 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.boss.EntityWither;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.ProjectileHelper;
@@ -41,12 +42,11 @@ public class EntityChakram extends Entity
 
 	private static final int TICKS_INTERVAL = 25;
 	private static final int AGE_MAX = (30 * 20);
+	private static final int THROWING_INTERVAL = (1 * 20);
 	private static final float SPEED_MIN = 0.85F;
 	private static final float SPEED_MAX = 1.85F;
 	private static final float DISTANCE_MIN = 6.4F;
 	private static final float DISTANCE_MAX = 64.0F;
-
-	private static final String BOOST_MODIFIER = "Boost modifier";
 
 	private static final String TAG = Chakram.MOD_ID + ".";
 	private static final String TAG_MOTION_XYZ = TAG + "motion_xyz";
@@ -54,19 +54,22 @@ public class EntityChakram extends Entity
 	private static final String TAG_OWNER_UUID = TAG + "owner_uuid";
 	private static final String TAG_ITEM = TAG + "item";
 	private static final String TAG_RETURN_OWNER = TAG + "return_owner";
+	private static final String TAG_RETURN_OFFHAND = TAG + "return_offhand";
 	private static final String TAG_CHAGE_AMMOUNT = TAG + "chage_ammount";
 	private static final String TAG_AGE = TAG + "age";
 
-	private double accelerationX;
-	private double accelerationY;
-	private double accelerationZ;
+	private static final String BOOST_MODIFIER = "Boost modifier";
+
 	private static final DataParameter<Optional<UUID>> OWNER_UUID = EntityDataManager.<Optional<UUID>> createKey(EntityTameable.class, DataSerializers.OPTIONAL_UNIQUE_ID);
 	private static final DataParameter<ItemStack> ITEM = EntityDataManager.<ItemStack> createKey(EntityChakram.class, DataSerializers.ITEM_STACK);
 
 	private boolean isReturnOwner;
+	private boolean isReturnOffHand;
+	private double accelerationX;
+	private double accelerationY;
+	private double accelerationZ;
 	private int chageAmmount;
 	private int age;
-
 	private int ticksAlive;
 
 	public EntityChakram(World world)
@@ -123,6 +126,7 @@ public class EntityChakram extends Entity
 
 		compound.setTag(TAG_ITEM, this.getEntityItem().writeToNBT(new NBTTagCompound()));
 		compound.setByte(TAG_RETURN_OWNER, this.isReturnOwner() ? (byte) 1 : (byte) 0);
+		compound.setByte(TAG_RETURN_OFFHAND, this.isReturnOffHand() ? (byte) 1 : (byte) 0);
 		compound.setByte(TAG_CHAGE_AMMOUNT, (byte) this.getChageAmount());
 		compound.setByte(TAG_AGE, (byte) this.getAge());
 	}
@@ -192,6 +196,7 @@ public class EntityChakram extends Entity
 
 		this.setEntityItem(stack);
 		this.setReturnOwner(compound.getByte(TAG_RETURN_OWNER) == 1);
+		this.setReturnOffHand(compound.getByte(TAG_RETURN_OFFHAND) == 1);
 		this.setChageAmount(compound.getByte(TAG_CHAGE_AMMOUNT));
 		this.setAge(compound.getByte(TAG_AGE));
 
@@ -251,22 +256,40 @@ public class EntityChakram extends Entity
 			{
 				if (!this.world.isRemote)
 				{
-					if (player.getHeldItemMainhand().isEmpty())
+					if (this.isReturnOffHand() && player.getHeldItemOffhand().isEmpty())
 					{
-						player.setHeldItem(EnumHand.MAIN_HAND, stack);
+						player.setHeldItem(EnumHand.OFF_HAND, stack);
 					}
 					else
 					{
-						if (!player.inventory.addItemStackToInventory(stack))
+						if (player.getHeldItemMainhand().isEmpty())
 						{
-							if (player.getHeldItemOffhand().isEmpty())
-							{
-								player.setHeldItem(EnumHand.OFF_HAND, stack);
-							}
-							else
+							player.setHeldItem(EnumHand.MAIN_HAND, stack);
+						}
+						else
+						{
+							if (!player.inventory.addItemStackToInventory(stack))
 							{
 								player.dropItem(stack, false);
 							}
+						}
+					}
+
+					player.getCooldownTracker().setCooldown(stack.getItem(), THROWING_INTERVAL);
+				}
+			}
+
+			if (!this.world.isRemote)
+			{
+				for (Entity riddenEntity : this.getPassengers())
+				{
+					if (riddenEntity instanceof EntityItem)
+					{
+						ItemStack entityItemStack = ((EntityItem) riddenEntity).getItem();
+
+						if (!player.inventory.addItemStackToInventory(entityItemStack))
+						{
+							player.dropItem(entityItemStack, false);
 						}
 					}
 				}
@@ -296,6 +319,7 @@ public class EntityChakram extends Entity
 			}
 
 			return;
+
 		}
 		else
 		{
@@ -363,20 +387,38 @@ public class EntityChakram extends Entity
 
 		if (this.isReturnOwner())
 		{
-			double vecX = (this.getOwner().posX - this.posX);
-			double vecY = ((this.getOwner().posY + (double) (this.getOwner().height / 2.0F)) - this.posY);
-			double vecZ = (this.getOwner().posZ - this.posZ);
-			vecX += this.rand.nextGaussian() * 0.4D;
-			vecY += this.rand.nextGaussian() * 0.4D;
-			vecZ += this.rand.nextGaussian() * 0.4D;
-			double distanceSqrt = (double) MathHelper.sqrt(vecX * vecX + vecY * vecY + vecZ * vecZ);
-			this.accelerationX = (vecX / distanceSqrt * 0.1D);
-			this.accelerationY = (vecY / distanceSqrt * 0.1D);
-			this.accelerationZ = (vecZ / distanceSqrt * 0.1D);
+			double ownerVecX = (this.getOwner().posX - this.posX);
+			double ownerVecY = ((this.getOwner().posY + (double) (this.getOwner().height / 2.0F)) - this.posY);
+			double ownerVecZ = (this.getOwner().posZ - this.posZ);
+			ownerVecX += this.rand.nextGaussian() * 0.4D;
+			ownerVecY += this.rand.nextGaussian() * 0.4D;
+			ownerVecZ += this.rand.nextGaussian() * 0.4D;
+			double distanceSqrt = (double) MathHelper.sqrt(ownerVecX * ownerVecX + ownerVecY * ownerVecY + ownerVecZ * ownerVecZ);
+			this.accelerationX = (ownerVecX / distanceSqrt * 0.1D);
+			this.accelerationY = (ownerVecY / distanceSqrt * 0.1D);
+			this.accelerationZ = (ownerVecZ / distanceSqrt * 0.1D);
+
+			if (!this.isBeingRidden())
+			{
+				double rangeXYZ = 1.25D;
+
+				for (EntityItem aroundEntityItem : this.world.getEntitiesWithinAABB(EntityItem.class, this.getEntityBoundingBox().grow(rangeXYZ, rangeXYZ, rangeXYZ)))
+				{
+					if (aroundEntityItem.getItem().isEmpty())
+					{
+						continue;
+					}
+
+					if (!this.world.isRemote)
+					{
+						aroundEntityItem.startRiding(this);
+					}
+				}
+			}
 		}
 		else
 		{
-			boolean isMaxThrowDistance = (this.getThrowDistance() < this.getOwner().getDistanceSqToEntity(this));
+			boolean isMaxThrowDistance = (this.getThrowDistance() < this.getOwner().getDistanceSq(this));
 			boolean isReflectiveBlock = (0.0F < this.world.getBlockState(blockPos).getBlockHardness(this.world, blockPos));
 
 			if (isMaxThrowDistance || isReflectiveBlock)
@@ -411,7 +453,7 @@ public class EntityChakram extends Entity
 		this.world.playSound(null, blockPos, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.VOICE, 0.5F, 2.0F + (this.rand.nextFloat() * 0.5F));
 	}
 
-	// TODO /* ======================================== MOD START =====================================*/
+	// TODO /* ======================================== MOD START // =====================================*/
 
 	public ItemStack getEntityItem()
 	{
@@ -475,6 +517,16 @@ public class EntityChakram extends Entity
 		this.isReturnOwner = isReturnOwner;
 	}
 
+	public boolean isReturnOffHand()
+	{
+		return this.isReturnOffHand;
+	}
+
+	public void setReturnOffHand(boolean isReturnOffHand)
+	{
+		this.isReturnOffHand = isReturnOffHand;
+	}
+
 	public int getChageAmount()
 	{
 		return this.chageAmmount;
@@ -504,16 +556,16 @@ public class EntityChakram extends Entity
 	{
 		Vec3d ownerLookVec = owner.getLookVec();
 		double lookDistance = 128.0D;
-		double vecX = (ownerLookVec.x * lookDistance);
-		double vecY = (ownerLookVec.y * lookDistance);
-		double vecZ = (ownerLookVec.z * lookDistance);
-		vecX += (this.rand.nextGaussian() * 0.4D);
-		vecY += (this.rand.nextGaussian() * 0.4D);
-		vecZ += (this.rand.nextGaussian() * 0.4D);
-		double distanceSqrt = (double) MathHelper.sqrt(vecX * vecX + vecY * vecY + vecZ * vecZ);
-		this.accelerationX = (vecX / distanceSqrt * 0.1D);
-		this.accelerationY = (vecY / distanceSqrt * 0.1D);
-		this.accelerationZ = (vecZ / distanceSqrt * 0.1D);
+		double ownerLookVecX = (ownerLookVec.x * lookDistance);
+		double ownerLookVecY = (ownerLookVec.y * lookDistance);
+		double ownerLookVecZ = (ownerLookVec.z * lookDistance);
+		ownerLookVecX += (this.rand.nextGaussian() * 0.4D);
+		ownerLookVecY += (this.rand.nextGaussian() * 0.4D);
+		ownerLookVecZ += (this.rand.nextGaussian() * 0.4D);
+		double distanceSqrt = (double) MathHelper.sqrt(ownerLookVecX * ownerLookVecX + ownerLookVecY * ownerLookVecY + ownerLookVecZ * ownerLookVecZ);
+		this.accelerationX = (ownerLookVecX / distanceSqrt * 0.1D);
+		this.accelerationY = (ownerLookVecY / distanceSqrt * 0.1D);
+		this.accelerationZ = (ownerLookVecZ / distanceSqrt * 0.1D);
 		double pX = (owner.posX + ownerLookVec.x * 1.5D);
 		double pY = (owner.posY + owner.getEyeHeight() + ownerLookVec.y * 1.5D);
 		double pZ = (owner.posZ + ownerLookVec.z * 1.5D);
@@ -533,7 +585,8 @@ public class EntityChakram extends Entity
 		ItemStack entityStack = this.getEntityItem();
 		Multimap<String, AttributeModifier> entityStackAttributeModifiers = entityStack.getAttributeModifiers(EntityEquipmentSlot.MAINHAND);
 
-		// FMLLog.info("pre : %f", (float) player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue());
+		// FMLLog.info("pre : %f", (float)
+		// player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue());
 
 		player.setHeldItem(EnumHand.MAIN_HAND, entityStack);
 		player.getAttributeMap().applyAttributeModifiers(entityStackAttributeModifiers);
@@ -542,7 +595,8 @@ public class EntityChakram extends Entity
 
 		attackDamageAttribute.applyModifier(boostAttackAttributeModifier);
 
-		// FMLLog.info("hit : %f", (float) player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue());
+		// FMLLog.info("hit : %f", (float)
+		// player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue());
 
 		try
 		{
@@ -558,7 +612,8 @@ public class EntityChakram extends Entity
 		player.getAttributeMap().removeAttributeModifiers(entityStackAttributeModifiers);
 		player.setHeldItem(EnumHand.MAIN_HAND, srcStack);
 
-		// FMLLog.info("post : %f", (float) player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue());
+		// FMLLog.info("post : %f", (float)
+		// player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue());
 	}
 
 	private float getThrowDistance()

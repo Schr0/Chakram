@@ -38,7 +38,7 @@ public class Chakram
 	/**
 	 * Modのバージョン.
 	 */
-	public static final String MOD_VERSION = "1.0.0";
+	public static final String MOD_VERSION = "2.0.0";
 
 	/**
 	 * ResourceLocationのDomain.
@@ -100,6 +100,7 @@ public class Chakram
 			// none
 		}
 	}
+
 	// TODO /* ======================================== MOD START =====================================*/
 
 	/**
@@ -114,7 +115,7 @@ public class Chakram
 	}
 
 	/**
-	 * Item / Blockモデルの登録.
+	 * Item・Blockモデルの登録.
 	 */
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent

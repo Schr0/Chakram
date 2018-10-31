@@ -33,8 +33,8 @@ public abstract class ItemChakram extends Item
 {
 
 	private static final String CHAKRAM_MODIFIER = "Chakram modifier";
-
-	private static final int CHAGE_INTERVAL = 25;
+	private static final float ATTACK_SPEED = -2.5F;
+	private static final int CHAGE_INTERVAL = (1 * 20);;
 	private static final int CHAGE_AMOUNT_MIN = 1;
 	private static final int CHAGE_AMOUNT_MAX = 10;
 
@@ -66,6 +66,7 @@ public abstract class ItemChakram extends Item
 		if (slot == EntityEquipmentSlot.MAINHAND)
 		{
 			multimap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, CHAKRAM_MODIFIER, (double) this.damageVsEntity, 0));
+			multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, CHAKRAM_MODIFIER, ATTACK_SPEED, 0));
 		}
 
 		return multimap;
@@ -100,7 +101,7 @@ public abstract class ItemChakram extends Item
 	}
 
 	@Override
-	public float getStrVsBlock(ItemStack stack, IBlockState state)
+	public float getDestroySpeed(ItemStack stack, IBlockState state)
 	{
 		Block block = state.getBlock();
 
@@ -188,7 +189,7 @@ public abstract class ItemChakram extends Item
 		{
 			EntityPlayer entityPlayer = (EntityPlayer) player;
 
-			entityPlayer.addExhaustion(0.15F);
+			entityPlayer.addExhaustion(0.1F);
 
 			int chageAmmount = this.getChageAmmount(EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, stack), usingCount);
 
@@ -216,20 +217,20 @@ public abstract class ItemChakram extends Item
 		}
 
 		EntityPlayer player = (EntityPlayer) entityLiving;
-
-		int usingCount = this.getUsingCount(stack, timeLeft);
-		int chageAmmount = this.getChageAmmount(EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, stack), usingCount);
+		int chageAmmount = this.getChageAmmount(EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, stack), this.getUsingCount(stack, timeLeft));
 		EntityChakram entityChakram = new EntityChakram(worldIn, player, stack, chageAmmount);
 
 		entityChakram.setHeadingFromOwner(player);
 
+		entityChakram.setReturnOffHand(ItemStack.areItemStacksEqual(stack, player.getHeldItemOffhand()));
+
 		worldIn.spawnEntity(entityChakram);
+
+		player.addExhaustion(0.20F);
 
 		player.getCooldownTracker().setCooldown(this, CHAGE_INTERVAL);
 
 		player.addStat(StatList.getObjectUseStats(this));
-
-		player.addExhaustion(0.20F);
 
 		player.inventory.deleteStack(stack);
 
@@ -238,7 +239,7 @@ public abstract class ItemChakram extends Item
 		worldIn.playSound(null, player.posX, player.posY, player.posZ, SoundEvents.ENTITY_EGG_THROW, SoundCategory.PLAYERS, 0.5F, 0.4F / (worldIn.rand.nextFloat() * 0.4F + 0.8F));
 	}
 
-	// TODO /* ======================================== MOD START =====================================*/
+	// TODO /* ======================================== MOD START // =====================================*/
 
 	public int getUsingCount(ItemStack stack, int timeLeft)
 	{
