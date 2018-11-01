@@ -1,9 +1,7 @@
 package schr0.chakram;
 
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
@@ -144,12 +142,18 @@ public class Chakram
 		(new ChakramRecipes()).registerRecipes(registry);
 	}
 
-	/**
-	 * バグメッセージ.
-	 */
-	public static void infoBugMessage(EntityPlayer player, Class bugClass)
-	{
-		player.sendMessage(new TextComponentString(bugClass + " でバグ発生中！ 楽しく遊んでるのに、ごめんね！ 報告してくれると助かります！"));
-	}
+	/*
+		@SubscribeEvent
+		public void onLivingDamageEvent(LivingDamageEvent event)
+		{
+			EntityLivingBase entity = event.getEntityLiving();
+			DamageSource damageSource = event.getSource();
+	
+			if (damageSource.getTrueSource() instanceof EntityPlayer)
+			{
+				FMLLog.info("Chakram : %f", event.getAmount());
+			}
+		}
+	//*/
 
 }

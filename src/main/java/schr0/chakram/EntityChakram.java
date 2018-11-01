@@ -11,7 +11,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.passive.EntityTameable;
@@ -41,7 +40,7 @@ public class EntityChakram extends Entity
 {
 
 	private static final int TICKS_INTERVAL = 25;
-	private static final int AGE_MAX = (30 * 20);
+	private static final int AGE_MAX = (10 * 20);
 	private static final int THROWING_INTERVAL = (1 * 20);
 	private static final float SPEED_MIN = 0.85F;
 	private static final float SPEED_MAX = 1.85F;
@@ -576,44 +575,37 @@ public class EntityChakram extends Entity
 	{
 		if (this.isBurning())
 		{
-			target.setFire(this.getChageAmount() * 20);
+			target.setFire(this.getChageAmount());
 		}
 
-		EntityPlayer player = (EntityPlayer) this.getOwner();
-		ItemStack srcStack = player.getHeldItemMainhand().copy();
-		IAttributeInstance attackDamageAttribute = player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
-		ItemStack entityStack = this.getEntityItem();
-		Multimap<String, AttributeModifier> entityStackAttributeModifiers = entityStack.getAttributeModifiers(EntityEquipmentSlot.MAINHAND);
-
-		// FMLLog.info("pre : %f", (float)
-		// player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue());
-
-		player.setHeldItem(EnumHand.MAIN_HAND, entityStack);
-		player.getAttributeMap().applyAttributeModifiers(entityStackAttributeModifiers);
-
-		AttributeModifier boostAttackAttributeModifier = this.getBoostAttackAttributeModifier((float) attackDamageAttribute.getAttributeValue());
-
-		attackDamageAttribute.applyModifier(boostAttackAttributeModifier);
-
-		// FMLLog.info("hit : %f", (float)
-		// player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue());
-
-		try
+		if (this.getOwner() != null)
 		{
-			player.attackTargetEntityWithCurrentItem(target);
+			EntityPlayer player = (EntityPlayer) this.getOwner();
+
+			try
+			{
+				ItemStack srcStack = player.getHeldItemMainhand().copy();
+				ItemStack dstStack = this.getEntityItem();
+				Multimap<String, AttributeModifier> srcStackAttributeModifiers = srcStack.getAttributeModifiers(EntityEquipmentSlot.MAINHAND);
+				Multimap<String, AttributeModifier> dstStackAttributeModifiers = dstStack.getAttributeModifiers(EntityEquipmentSlot.MAINHAND);
+
+				player.setHeldItem(EnumHand.MAIN_HAND, dstStack);
+				player.getAttributeMap().applyAttributeModifiers(dstStackAttributeModifiers);
+
+				AttributeModifier boostAttackAttributeModifier = this.getBoostAttackAttributeModifier(player);
+
+				player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).applyModifier(boostAttackAttributeModifier);
+				player.attackTargetEntityWithCurrentItem(target);
+				player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).removeModifier(boostAttackAttributeModifier);
+
+				player.setHeldItem(EnumHand.MAIN_HAND, srcStack);
+				player.getAttributeMap().applyAttributeModifiers(srcStackAttributeModifiers);
+			}
+			catch (IllegalArgumentException e)
+			{
+				ChakramDebug.infoBugMessage(player, this.getClass());
+			}
 		}
-		catch (IllegalArgumentException e)
-		{
-			Chakram.instance.infoBugMessage(player, this.getClass());
-		}
-
-		attackDamageAttribute.removeModifier(boostAttackAttributeModifier);
-
-		player.getAttributeMap().removeAttributeModifiers(entityStackAttributeModifiers);
-		player.setHeldItem(EnumHand.MAIN_HAND, srcStack);
-
-		// FMLLog.info("post : %f", (float)
-		// player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue());
 	}
 
 	private float getThrowDistance()
@@ -639,12 +631,17 @@ public class EntityChakram extends Entity
 		return speed;
 	}
 
-	private AttributeModifier getBoostAttackAttributeModifier(float srcAttackDamage)
+	private AttributeModifier getBoostAttackAttributeModifier(EntityPlayer player)
 	{
-		float boostAmount = 1.0F + ((float) this.getChageAmount() / 10);
-		float boostAttackDamage = (srcAttackDamage * boostAmount);
+		float srcAttackDamage = (float) player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue();
+		float boostAttackDamage = srcAttackDamage * (1.0F + ((float) this.getChageAmount() / 10));
 
-		return new AttributeModifier(BOOST_MODIFIER, (boostAttackDamage - srcAttackDamage), 0);
+		if (this.isReturnOwner())
+		{
+			boostAttackDamage = (srcAttackDamage / 2);
+		}
+
+		return new AttributeModifier(BOOST_MODIFIER, boostAttackDamage, 0);
 	}
 
 	private static boolean isOwnerNotExists(EntityPlayer player, EntityChakram entity)

@@ -14,6 +14,7 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
+import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.EnumAction;
@@ -28,6 +29,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.oredict.OreDictionary;
 
 public abstract class ItemChakram extends Item
 {
@@ -56,6 +58,17 @@ public abstract class ItemChakram extends Item
 	public boolean isFull3D()
 	{
 		return true;
+	}
+
+	@Override
+	public boolean getIsRepairable(ItemStack toRepair, ItemStack repair)
+	{
+		if (OreDictionary.itemMatches(new ItemStack(Items.IRON_INGOT), repair, false))
+		{
+			return true;
+		}
+
+		return super.getIsRepairable(toRepair, repair);
 	}
 
 	@Override
