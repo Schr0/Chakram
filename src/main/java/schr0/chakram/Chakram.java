@@ -151,9 +151,9 @@ public class Chakram
 	
 			if (damageSource.getTrueSource() instanceof EntityPlayer)
 			{
-				FMLLog.info("Chakram : %f", event.getAmount());
+				FMLLog.info("Chakram Damage : %f", event.getAmount());
 			}
 		}
-	//*/
+	// */
 
 }

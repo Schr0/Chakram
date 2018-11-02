@@ -26,6 +26,7 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.server.management.PreYggdrasilConverter;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
@@ -74,7 +75,7 @@ public class EntityChakram extends Entity
 	public EntityChakram(World world)
 	{
 		super(world);
-		this.setSize(0.95F, 0.25F);
+		this.setSize(0.9F, 0.25F);
 		this.motionX = this.motionY = this.motionZ = 0.0D;
 		this.accelerationX = this.accelerationY = this.accelerationZ = 0.0D;
 		this.ticksAlive = 0;
@@ -605,6 +606,10 @@ public class EntityChakram extends Entity
 			{
 				ChakramDebug.infoBugMessage(player, this.getClass());
 			}
+		}
+		else
+		{
+			target.attackEntityFrom(DamageSource.GENERIC, ChakramItems.TOOLMATERIAL_CHAKRAM.getAttackDamage());
 		}
 	}
 

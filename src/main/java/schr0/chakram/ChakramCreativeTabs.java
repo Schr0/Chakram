@@ -12,7 +12,7 @@ public class ChakramCreativeTabs
 		@Override
 		public ItemStack getTabIconItem()
 		{
-			return new ItemStack(ChakramItems.CHAKRAM_NORMAL);
+			return new ItemStack(ChakramItems.CHAKRAM);
 		}
 
 	};
