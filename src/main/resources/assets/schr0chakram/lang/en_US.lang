@@ -3,3 +3,4 @@ itemGroup.schr0chakram.item=Chakram : Items
 
 // ======================================== ITEM ===================================== //
 item.chakram.name=Chakram
+item.chakram.tooltip=You can throw with right click.

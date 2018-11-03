@@ -7,6 +7,8 @@ import javax.annotation.Nullable;
 import com.google.common.base.Optional;
 import com.google.common.collect.Multimap;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -29,6 +31,7 @@ import net.minecraft.server.management.PreYggdrasilConverter;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
@@ -40,8 +43,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class EntityChakram extends Entity
 {
 
+	private static final float SIZE_WIDTH = 0.9F;
+	private static final float SIZE_HEIGHT = 0.25F;
+	private static final int AGE_MAX = (15 * 20);
 	private static final int TICKS_INTERVAL = 25;
-	private static final int AGE_MAX = (10 * 20);
 	private static final int THROWING_INTERVAL = (1 * 20);
 	private static final float SPEED_MIN = 0.85F;
 	private static final float SPEED_MAX = 1.85F;
@@ -59,7 +64,6 @@ public class EntityChakram extends Entity
 	private static final String TAG_AGE = TAG + "age";
 
 	private static final String BOOST_MODIFIER = "Boost modifier";
-
 	private static final DataParameter<Optional<UUID>> OWNER_UUID = EntityDataManager.<Optional<UUID>> createKey(EntityTameable.class, DataSerializers.OPTIONAL_UNIQUE_ID);
 	private static final DataParameter<ItemStack> ITEM = EntityDataManager.<ItemStack> createKey(EntityChakram.class, DataSerializers.ITEM_STACK);
 
@@ -75,7 +79,7 @@ public class EntityChakram extends Entity
 	public EntityChakram(World world)
 	{
 		super(world);
-		this.setSize(0.9F, 0.25F);
+		this.setSize(SIZE_WIDTH, SIZE_HEIGHT);
 		this.motionX = this.motionY = this.motionZ = 0.0D;
 		this.accelerationX = this.accelerationY = this.accelerationZ = 0.0D;
 		this.ticksAlive = 0;
@@ -84,7 +88,7 @@ public class EntityChakram extends Entity
 	public EntityChakram(World world, EntityPlayer player, ItemStack stack, int chageAmmount)
 	{
 		super(world);
-		this.setSize(0.95F, 0.25F);
+		this.setSize(SIZE_WIDTH, SIZE_HEIGHT);
 		this.motionX = this.motionY = this.motionZ = 0.0D;
 		this.accelerationX = this.accelerationY = this.accelerationZ = 0.0D;
 		this.ticksAlive = 0;
@@ -206,6 +210,7 @@ public class EntityChakram extends Entity
 		}
 	}
 
+	@Override
 	@SideOnly(Side.CLIENT)
 	public boolean isInRangeToRenderDist(double distance)
 	{
@@ -230,7 +235,7 @@ public class EntityChakram extends Entity
 	@Override
 	public void onCollideWithPlayer(EntityPlayer player)
 	{
-		if (this.isReturnOwner() && this.isOwner(player) && !this.world.isRemote)
+		if (this.isReturnOwner() && this.isOwner(player) && this.isServerWorld())
 		{
 			this.setDead();
 		}
@@ -254,7 +259,7 @@ public class EntityChakram extends Entity
 			}
 			else
 			{
-				if (!this.world.isRemote)
+				if (this.isServerWorld())
 				{
 					if (this.isReturnOffHand() && player.getHeldItemOffhand().isEmpty())
 					{
@@ -279,7 +284,7 @@ public class EntityChakram extends Entity
 				}
 			}
 
-			if (!this.world.isRemote)
+			if (this.isServerWorld())
 			{
 				for (Entity riddenEntity : this.getPassengers())
 				{
@@ -297,7 +302,7 @@ public class EntityChakram extends Entity
 		}
 		else
 		{
-			if (!isBreakItemDmage && !this.world.isRemote)
+			if (!isBreakItemDmage && this.isServerWorld())
 			{
 				this.entityDropItem(stack, 0.5F);
 			}
@@ -309,11 +314,11 @@ public class EntityChakram extends Entity
 	@Override
 	public void onUpdate()
 	{
-		if (isOwnerNotExists(this.getOwner(), this))
+		if (isOwnerNotExists(this, this.getOwner()))
 		{
 			boolean isRestartInterval = (TICKS_INTERVAL <= this.ticksExisted);
 
-			if (isRestartInterval && !this.world.isRemote)
+			if (isRestartInterval && this.isServerWorld())
 			{
 				this.setDead();
 			}
@@ -323,7 +328,7 @@ public class EntityChakram extends Entity
 		}
 		else
 		{
-			if (!this.world.isRemote)
+			if (this.isServerWorld())
 			{
 				int age = this.getAge();
 
@@ -409,7 +414,7 @@ public class EntityChakram extends Entity
 						continue;
 					}
 
-					if (!this.world.isRemote)
+					if (this.isServerWorld())
 					{
 						aroundEntityItem.startRiding(this);
 					}
@@ -419,7 +424,7 @@ public class EntityChakram extends Entity
 		else
 		{
 			boolean isMaxThrowDistance = (this.getThrowDistance() < this.getOwner().getDistanceSq(this));
-			boolean isReflectiveBlock = (0.0F < this.world.getBlockState(blockPos).getBlockHardness(this.world, blockPos));
+			boolean isReflectiveBlock = isReflectiveBlock(world, blockPos);
 
 			if (isMaxThrowDistance || isReflectiveBlock)
 			{
@@ -582,35 +587,39 @@ public class EntityChakram extends Entity
 		if (this.getOwner() != null)
 		{
 			EntityPlayer player = (EntityPlayer) this.getOwner();
+			ItemStack srcStack = player.getHeldItemMainhand().copy();
+			ItemStack dstStack = this.getEntityItem();
+			Multimap<String, AttributeModifier> srcStackAttributeModifiers = srcStack.getAttributeModifiers(EntityEquipmentSlot.MAINHAND);
+			Multimap<String, AttributeModifier> dstStackAttributeModifiers = dstStack.getAttributeModifiers(EntityEquipmentSlot.MAINHAND);
+
+			player.setHeldItem(EnumHand.MAIN_HAND, dstStack);
+			player.getAttributeMap().applyAttributeModifiers(dstStackAttributeModifiers);
 
 			try
 			{
-				ItemStack srcStack = player.getHeldItemMainhand().copy();
-				ItemStack dstStack = this.getEntityItem();
-				Multimap<String, AttributeModifier> srcStackAttributeModifiers = srcStack.getAttributeModifiers(EntityEquipmentSlot.MAINHAND);
-				Multimap<String, AttributeModifier> dstStackAttributeModifiers = dstStack.getAttributeModifiers(EntityEquipmentSlot.MAINHAND);
-
-				player.setHeldItem(EnumHand.MAIN_HAND, dstStack);
-				player.getAttributeMap().applyAttributeModifiers(dstStackAttributeModifiers);
-
 				AttributeModifier boostAttackAttributeModifier = this.getBoostAttackAttributeModifier(player);
 
 				player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).applyModifier(boostAttackAttributeModifier);
 				player.attackTargetEntityWithCurrentItem(target);
 				player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).removeModifier(boostAttackAttributeModifier);
-
-				player.setHeldItem(EnumHand.MAIN_HAND, srcStack);
-				player.getAttributeMap().applyAttributeModifiers(srcStackAttributeModifiers);
 			}
 			catch (IllegalArgumentException e)
 			{
 				ChakramDebug.infoBugMessage(player, this.getClass());
 			}
+
+			player.setHeldItem(EnumHand.MAIN_HAND, srcStack);
+			player.getAttributeMap().applyAttributeModifiers(srcStackAttributeModifiers);
 		}
 		else
 		{
 			target.attackEntityFrom(DamageSource.GENERIC, ChakramItems.TOOLMATERIAL_CHAKRAM.getAttackDamage());
 		}
+	}
+
+	private boolean isServerWorld()
+	{
+		return !this.world.isRemote;
 	}
 
 	private float getThrowDistance()
@@ -633,12 +642,18 @@ public class EntityChakram extends Entity
 			speed = SPEED_MIN;
 		}
 
+		if (this.isInWater())
+		{
+			speed = (speed / 1.25F);
+
+		}
+
 		return speed;
 	}
 
-	private AttributeModifier getBoostAttackAttributeModifier(EntityPlayer player)
+	private AttributeModifier getBoostAttackAttributeModifier(EntityPlayer owner)
 	{
-		float srcAttackDamage = (float) player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue();
+		float srcAttackDamage = (float) owner.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue();
 		float boostAttackDamage = srcAttackDamage * (1.0F + ((float) this.getChageAmount() / 10));
 
 		if (this.isReturnOwner())
@@ -646,17 +661,39 @@ public class EntityChakram extends Entity
 			boostAttackDamage = (srcAttackDamage / 2);
 		}
 
+		if (this.isInWater())
+		{
+			boostAttackDamage = (srcAttackDamage / 3);
+		}
+
 		return new AttributeModifier(BOOST_MODIFIER, boostAttackDamage, 0);
 	}
 
-	private static boolean isOwnerNotExists(EntityPlayer player, EntityChakram entity)
+	private static boolean isOwnerNotExists(EntityChakram entityChakram, EntityPlayer owner)
 	{
-		if (player == null || entity == null || (player != null && player.isDead) || (entity != null && entity.isDead))
+		if (entityChakram == null || owner == null || (entityChakram != null && entityChakram.isDead) || (owner != null && owner.isDead))
 		{
 			return true;
 		}
 
-		return (!entity.world.isBlockLoaded(new BlockPos(entity)));
+		return (!entityChakram.world.isBlockLoaded(new BlockPos(entityChakram)));
+	}
+
+	private static boolean isReflectiveBlock(World world, BlockPos pos)
+	{
+		IBlockState state = world.getBlockState(pos);
+
+		if (state.getMaterial() != Material.AIR)
+		{
+			AxisAlignedBB axisalignedbb = state.getCollisionBoundingBox(world, pos);
+
+			if (axisalignedbb != Block.NULL_AABB)
+			{
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 }

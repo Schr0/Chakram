@@ -15,6 +15,7 @@ import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.registries.IForgeRegistry;
+import schr0.chakram.api.ChakramAPI;
 
 @Mod(modid = Chakram.MOD_ID, name = Chakram.MOD_NAME, version = Chakram.MOD_VERSION)
 public class Chakram
@@ -26,7 +27,7 @@ public class Chakram
 	/**
 	 * ModのID.
 	 */
-	public static final String MOD_ID = "schr0chakram";
+	public static final String MOD_ID = ChakramAPI.MOD_ID;
 
 	/**
 	 * Modの名前.

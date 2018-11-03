@@ -14,7 +14,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class ChakramEntitys
 {
 
-	public static final String NAME_CHAKRAM = "chakram";
+	public static final String NAME_CHAKRAM = ChakramItems.NAME_CHAKRAM;
 	public static final int ID_CHAKRAM = 0;
 	public static final int TRACKING_RANGE = 250;
 	public static final int UPDATE_FREQUENCY = 1;
