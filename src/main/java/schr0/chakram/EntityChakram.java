@@ -79,21 +79,15 @@ public class EntityChakram extends Entity
 	public EntityChakram(World world)
 	{
 		super(world);
-		this.setSize(SIZE_WIDTH, SIZE_HEIGHT);
-		this.motionX = this.motionY = this.motionZ = 0.0D;
-		this.accelerationX = this.accelerationY = this.accelerationZ = 0.0D;
-		this.ticksAlive = 0;
+		this.entityChakramInit();
 	}
 
-	public EntityChakram(World world, EntityPlayer player, ItemStack stack, int chageAmmount)
+	public EntityChakram(World world, EntityPlayer owner, ItemStack stack, int chageAmmount)
 	{
 		super(world);
-		this.setSize(SIZE_WIDTH, SIZE_HEIGHT);
-		this.motionX = this.motionY = this.motionZ = 0.0D;
-		this.accelerationX = this.accelerationY = this.accelerationZ = 0.0D;
-		this.ticksAlive = 0;
+		this.entityChakramInit();
 
-		this.setOwnerUUID(player.getUniqueID());
+		this.setOwnerUUID(owner.getUniqueID());
 		this.setEntityItem(stack);
 		this.setChageAmount(chageAmmount);
 		this.setAge(0);
@@ -577,7 +571,7 @@ public class EntityChakram extends Entity
 		this.setLocationAndAngles(pX, pY, pZ, owner.rotationYaw, owner.rotationPitch);
 	}
 
-	private void onHitEntity(Entity target)
+	public void onHitEntity(Entity target)
 	{
 		if (this.isBurning())
 		{
@@ -617,12 +611,7 @@ public class EntityChakram extends Entity
 		}
 	}
 
-	private boolean isServerWorld()
-	{
-		return !this.world.isRemote;
-	}
-
-	private float getThrowDistance()
+	public float getThrowDistance()
 	{
 		float distance = DISTANCE_MIN * (float) this.getChageAmount();
 		distance = Math.min(distance, DISTANCE_MAX);
@@ -631,7 +620,7 @@ public class EntityChakram extends Entity
 		return (distance * distance);
 	}
 
-	private float getThrowSpeed()
+	public float getThrowSpeed()
 	{
 		float speed = SPEED_MIN + ((float) this.getChageAmount() / 10);
 		speed = Math.min(speed, SPEED_MAX);
@@ -651,7 +640,7 @@ public class EntityChakram extends Entity
 		return speed;
 	}
 
-	private AttributeModifier getBoostAttackAttributeModifier(EntityPlayer owner)
+	public AttributeModifier getBoostAttackAttributeModifier(EntityPlayer owner)
 	{
 		float srcAttackDamage = (float) owner.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue();
 		float boostAttackDamage = srcAttackDamage * (1.0F + ((float) this.getChageAmount() / 10));
@@ -667,6 +656,19 @@ public class EntityChakram extends Entity
 		}
 
 		return new AttributeModifier(BOOST_MODIFIER, boostAttackDamage, 0);
+	}
+
+	private boolean isServerWorld()
+	{
+		return !this.world.isRemote;
+	}
+
+	private void entityChakramInit()
+	{
+		this.setSize(SIZE_WIDTH, SIZE_HEIGHT);
+		this.motionX = this.motionY = this.motionZ = 0.0D;
+		this.accelerationX = this.accelerationY = this.accelerationZ = 0.0D;
+		this.ticksAlive = 0;
 	}
 
 	private static boolean isOwnerNotExists(EntityChakram entityChakram, EntityPlayer owner)

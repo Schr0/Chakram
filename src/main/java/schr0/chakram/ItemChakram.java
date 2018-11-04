@@ -148,12 +148,12 @@ public class ItemChakram extends ItemSword
 
 	// TODO /* ======================================== MOD START // =====================================*/
 
-	private int getUsingCount(ItemStack stack, int tickCount)
+	public int getUsingCount(ItemStack stack, int tickCount)
 	{
 		return (this.getMaxItemUseDuration(stack) - tickCount);
 	}
 
-	private int getChageAmmount(ItemStack stack, int usingCount)
+	public int getChageAmmount(ItemStack stack, int usingCount)
 	{
 		int powerLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, stack);
 		int chageAmount = powerLevel + (usingCount / 20);

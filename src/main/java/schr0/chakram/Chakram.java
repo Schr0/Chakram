@@ -32,7 +32,7 @@ public class Chakram
 	/**
 	 * Modの名前.
 	 */
-	public static final String MOD_NAME = "Chakram";
+	public static final String MOD_NAME = ChakramAPI.MOD_NAME;
 
 	/**
 	 * Modのバージョン.
