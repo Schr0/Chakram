@@ -1,0 +1,26 @@
+{
+    "display": {
+        "icon": {
+            "item": "schr0chakram:chakram"
+        },
+        "title": {
+            "translate": "advancements.schr0chakram.get.title"
+        },
+        "description": {
+            "translate": "advancements.schr0chakram.get.description"
+        },
+            "background": "minecraft:textures/blocks/iron_block.png"
+    },
+    "criteria": {
+        "throw": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                            {
+                                "item": "schr0chakram:chakram"
+                            }
+                ]
+            }
+        }
+    }
+}

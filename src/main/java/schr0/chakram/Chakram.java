@@ -138,9 +138,11 @@ public class Chakram
 	@SubscribeEvent
 	public void registerRecipes(RegistryEvent.Register<IRecipe> event)
 	{
+		/* TODO 1.13次第で復帰
 		IForgeRegistry<IRecipe> registry = event.getRegistry();
-
+		
 		(new ChakramRecipes()).registerRecipes(registry);
+		//*/
 	}
 
 	/*

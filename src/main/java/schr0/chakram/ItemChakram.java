@@ -144,6 +144,7 @@ public class ItemChakram extends ItemSword
 		ChakramPackets.DISPATCHER.sendToAll(new MessagePlayerAction(player, ChakramActionTypes.SWING_ARM));
 
 		worldIn.playSound(null, player.posX, player.posY, player.posZ, SoundEvents.ENTITY_EGG_THROW, SoundCategory.PLAYERS, 0.5F, 0.4F / (worldIn.rand.nextFloat() * 0.4F + 0.8F));
+
 	}
 
 	// TODO /* ======================================== MOD START // =====================================*/

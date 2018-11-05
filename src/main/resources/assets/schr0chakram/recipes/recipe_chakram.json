@@ -1,0 +1,26 @@
+{
+    "type": "forge:ore_shaped",
+    "group": "minecraft:iron_sword",
+    "pattern": [
+        " X ",
+        "XYX",
+        "ZX "
+    ],
+    "key": {
+        "X": {
+            "type": "forge:ore_dict",
+            "ore": "ingotIron"
+        },
+        "Y": {
+            "type": "forge:ore_dict",
+            "ore": "enderpearl"
+       },
+        "Z": {
+            "type": "forge:ore_dict",
+            "ore": "leather"
+        }
+    },
+    "result": {
+    "item": "schr0chakram:chakram"
+    }
+}

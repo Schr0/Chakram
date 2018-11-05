@@ -4,3 +4,7 @@ itemGroup.schr0chakram.item=Chakram : Items
 // ======================================== ITEM ===================================== //
 item.chakram.name=Chakram
 item.chakram.tooltip=You can throw with right click.
+
+// ======================================== ADVANCEMENTS ===================================== //
+advancements.schr0chakram.get.title=CHAKRAM
+advancements.schr0chakram.get.description=Throwing Weapon.

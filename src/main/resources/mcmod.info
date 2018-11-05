@@ -1,16 +1,16 @@
 [
-{
-  "modid": "schr0chakram",
-  "name": "Chakram",
-  "description": "Throwing Weapon.",
-  "version": "2.0.0",
-  "mcversion": "",
-  "url": "http://forum.minecraftuser.jp/viewtopic.php?f=13&t=5376",
-  "updateUrl": "",
-  "authorList": ["Schr0"],
-  "credits": "",
-  "logoFile": "logo.png",
-  "screenshots": [],
-  "dependencies": []
-}
+    {
+        "modid": "schr0chakram",
+        "name": "Chakram",
+        "description": "Throwing Weapon.",
+        "version": "2.0.0",
+        "mcversion": "",
+        "url": "http://forum.minecraftuser.jp/viewtopic.php?f=13&t=5376",
+        "updateUrl": "",
+        "authorList": ["Schr0"],
+        "credits": "",
+        "logoFile": "assets/schr0chakram/logo.png",
+        "screenshots": [],
+        "dependencies": []
+    }
 ]
