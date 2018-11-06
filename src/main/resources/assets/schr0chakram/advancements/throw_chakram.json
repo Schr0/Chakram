@@ -1,0 +1,19 @@
+{
+    "display": {
+        "icon": {
+            "item": "minecraft:snowball"
+        },
+        "title": {
+            "translate": "advancements.schr0chakram.throw.title"
+        },
+        "description": {
+            "translate": "advancements.schr0chakram.throw.description"
+        }
+    },
+    "parent": "schr0chakram:root",
+    "criteria": {
+        "schr0chakram_trigger": {
+            "trigger": "minecraft:impossible"
+        }
+    }
+}

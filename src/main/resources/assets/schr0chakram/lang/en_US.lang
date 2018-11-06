@@ -6,5 +6,8 @@ item.chakram.name=Chakram
 item.chakram.tooltip=You can throw with right click.
 
 // ======================================== ADVANCEMENTS ===================================== //
-advancements.schr0chakram.get.title=CHAKRAM
-advancements.schr0chakram.get.description=Throwing Weapon.
+advancements.schr0chakram.start.title=Chakram
+advancements.schr0chakram.start.description=Let's get it.
+
+advancements.schr0chakram.throw.title=Throwing !!!
+advancements.schr0chakram.throw.description=Let's throwing.
