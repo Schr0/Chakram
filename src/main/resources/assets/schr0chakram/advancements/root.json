@@ -4,10 +4,10 @@
             "item": "schr0chakram:chakram"
         },
         "title": {
-            "translate": "advancements.schr0chakram.start.title"
+            "translate": "advancements.schr0chakram.title"
         },
         "description": {
-            "translate": "advancements.schr0chakram.start.description"
+            "translate": "advancements.schr0chakram.description"
         },
             "background": "minecraft:textures/blocks/iron_block.png"
     },

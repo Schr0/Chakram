@@ -15,6 +15,7 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.ProjectileHelper;
@@ -604,6 +605,11 @@ public class EntityChakram extends Entity
 
 			player.setHeldItem(EnumHand.MAIN_HAND, srcStack);
 			player.getAttributeMap().applyAttributeModifiers(srcStackAttributeModifiers);
+
+			if (target instanceof EntityEnderman)
+			{
+				ChakramAdvancements.completeAttackEnderman(player);
+			}
 		}
 		else
 		{

@@ -1,0 +1,19 @@
+{
+    "display": {
+        "icon": {
+            "item": "minecraft:ender_pearl"
+        },
+        "title": {
+            "translate": "advancements.schr0chakram.attack_enderman.title"
+        },
+        "description": {
+            "translate": "advancements.schr0chakram.attack_enderman.description"
+        }
+    },
+    "parent": "schr0chakram:adventure/throwing",
+    "criteria": {
+        "schr0chakram_trigger": {
+            "trigger": "minecraft:impossible"
+        }
+    }
+}

@@ -1,13 +1,13 @@
 {
     "display": {
         "icon": {
-            "item": "minecraft:snowball"
+            "item": "minecraft:arrow"
         },
         "title": {
-            "translate": "advancements.schr0chakram.throw.title"
+            "translate": "advancements.schr0chakram.throwing.title"
         },
         "description": {
-            "translate": "advancements.schr0chakram.throw.description"
+            "translate": "advancements.schr0chakram.throwing.description"
         }
     },
     "parent": "schr0chakram:root",

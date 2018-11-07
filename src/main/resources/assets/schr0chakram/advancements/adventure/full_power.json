@@ -1,0 +1,19 @@
+{
+    "display": {
+        "icon": {
+            "item": "minecraft:bow"
+        },
+        "title": {
+            "translate": "advancements.schr0chakram.full_power.title"
+        },
+        "description": {
+            "translate": "advancements.schr0chakram.full_power.description"
+        }
+    },
+    "parent": "schr0chakram:adventure/throwing",
+    "criteria": {
+        "schr0chakram_trigger": {
+            "trigger": "minecraft:impossible"
+        }
+    }
+}

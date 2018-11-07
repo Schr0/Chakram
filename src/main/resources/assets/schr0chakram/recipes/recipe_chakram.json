@@ -1,6 +1,5 @@
 {
     "type": "forge:ore_shaped",
-    "group": "minecraft:iron_sword",
     "pattern": [
         " X ",
         "XYX",
@@ -21,6 +20,6 @@
         }
     },
     "result": {
-    "item": "schr0chakram:chakram"
+        "item": "schr0chakram:chakram"
     }
 }
