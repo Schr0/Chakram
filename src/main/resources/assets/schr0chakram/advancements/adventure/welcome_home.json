@@ -1,17 +1,17 @@
 {
     "display": {
         "icon": {
-            "item": "minecraft:spectral_arrow"
+            "item": "minecraft:chest"
         },
         "title": {
-            "translate": "advancements.schr0chakram.full_power.title"
+            "translate": "advancements.schr0chakram.welcome_home.title"
         },
         "description": {
-            "translate": "advancements.schr0chakram.full_power.description"
+            "translate": "advancements.schr0chakram.welcome_home.description"
         },
         "frame": "goal"
     },
-    "parent": "schr0chakram:adventure/enchantment_power",
+    "parent": "schr0chakram:adventure/full_power",
     "criteria": {
         "schr0chakram_trigger": {
             "trigger": "minecraft:impossible"

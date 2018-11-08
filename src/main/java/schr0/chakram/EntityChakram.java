@@ -11,11 +11,11 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.ProjectileHelper;
@@ -291,6 +291,8 @@ public class EntityChakram extends Entity
 						{
 							player.dropItem(entityItemStack, false);
 						}
+
+						ChakramAdvancements.completeCollectItems(player);
 					}
 				}
 			}
@@ -331,6 +333,11 @@ public class EntityChakram extends Entity
 
 				if (this.getMaxAge() < age)
 				{
+					if (this.getOwner() != null)
+					{
+						ChakramAdvancements.completeWelcomeHome(this.getOwner());
+					}
+
 					this.setDead();
 				}
 				else
@@ -606,9 +613,9 @@ public class EntityChakram extends Entity
 			player.setHeldItem(EnumHand.MAIN_HAND, srcStack);
 			player.getAttributeMap().applyAttributeModifiers(srcStackAttributeModifiers);
 
-			if (target instanceof EntityEnderman)
+			if (target instanceof EntityLivingBase)
 			{
-				ChakramAdvancements.completeAttackEnderman(player);
+				ChakramAdvancements.completeThrowAttack(player);
 			}
 		}
 		else

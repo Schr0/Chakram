@@ -35,6 +35,20 @@ public class ChakramAdvancements
 		return complete(player, key);
 	}
 
+	public static boolean completeCollectItems(EntityPlayer player)
+	{
+		ResourceLocation key = new ResourceLocation(RES_KEY, "adventure/collect_items");
+
+		return complete(player, key);
+	}
+
+	public static boolean completeThrowAttack(EntityPlayer player)
+	{
+		ResourceLocation key = new ResourceLocation(RES_KEY, "adventure/throw_attack");
+
+		return complete(player, key);
+	}
+
 	public static boolean completeFullPower(EntityPlayer player)
 	{
 		ResourceLocation key = new ResourceLocation(RES_KEY, "adventure/full_power");
@@ -42,9 +56,9 @@ public class ChakramAdvancements
 		return complete(player, key);
 	}
 
-	public static boolean completeAttackEnderman(EntityPlayer player)
+	public static boolean completeWelcomeHome(EntityPlayer player)
 	{
-		ResourceLocation key = new ResourceLocation(RES_KEY, "adventure/attack_enderman");
+		ResourceLocation key = new ResourceLocation(RES_KEY, "adventure/welcome_home");
 
 		return complete(player, key);
 	}

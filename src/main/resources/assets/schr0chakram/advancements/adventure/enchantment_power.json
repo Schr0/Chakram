@@ -1,0 +1,29 @@
+{
+    "display": {
+        "icon": {
+            "item": "minecraft:enchanted_book"
+        },
+        "title": {
+            "translate": "advancements.schr0chakram.enchantment_power.title"
+        },
+        "description": {
+            "translate": "advancements.schr0chakram.enchantment_power.description"
+        }
+    },
+    "parent": "schr0chakram:adventure/throwing",
+    "criteria": {
+        "enchantment_power": {
+            "trigger": "minecraft:enchanted_item",
+            "conditions": {
+                "item": {
+                    "item": "schr0chakram:chakram",
+                    "enchantments": [
+                        {
+                            "enchantment": "minecraft:power"
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}

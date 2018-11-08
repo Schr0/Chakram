@@ -104,8 +104,6 @@ public class ItemChakram extends ItemSword
 				ChakramPackets.DISPATCHER.sendToAll(new MessageParticleEntity(entityPlayer, ChakramParticles.ITEM_CHAGE_MAX));
 
 				world.playSound(null, entityPlayer.getPosition(), SoundEvents.ENTITY_PLAYER_LEVELUP, SoundCategory.PLAYERS, 0.25F, 1.0F);
-
-				ChakramAdvancements.completeFullPower(entityPlayer);
 			}
 			else
 			{
@@ -148,6 +146,11 @@ public class ItemChakram extends ItemSword
 		worldIn.playSound(null, player.posX, player.posY, player.posZ, SoundEvents.ENTITY_EGG_THROW, SoundCategory.PLAYERS, 0.5F, 0.4F / (worldIn.rand.nextFloat() * 0.4F + 0.8F));
 
 		ChakramAdvancements.completeThrowing(player);
+
+		if (isFullPower(chageAmmount, stack))
+		{
+			ChakramAdvancements.completeFullPower(player);
+		}
 	}
 
 	// TODO /* ======================================== MOD START // =====================================*/
@@ -165,6 +168,16 @@ public class ItemChakram extends ItemSword
 		chageAmount = Math.max(chageAmount, CHAGE_AMOUNT_MIN);
 
 		return chageAmount;
+	}
+
+	private static boolean isFullPower(int chageAmmount, ItemStack stack)
+	{
+		if (CHAGE_AMOUNT_MAX <= chageAmmount)
+		{
+			return (EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, stack) == Enchantments.POWER.getMaxLevel());
+		}
+
+		return false;
 	}
 
 }

@@ -1,0 +1,19 @@
+{
+    "display": {
+        "icon": {
+            "item": "minecraft:hopper"
+        },
+        "title": {
+            "translate": "advancements.schr0chakram.collect_items.title"
+        },
+        "description": {
+            "translate": "advancements.schr0chakram.collect_items.description"
+        }
+    },
+    "parent": "schr0chakram:adventure/throwing",
+    "criteria": {
+        "schr0chakram_trigger": {
+            "trigger": "minecraft:impossible"
+        }
+    }
+}
