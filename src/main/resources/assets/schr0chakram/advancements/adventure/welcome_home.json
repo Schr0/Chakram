@@ -9,7 +9,7 @@
         "description": {
             "translate": "advancements.schr0chakram.welcome_home.description"
         },
-        "frame": "goal"
+        "frame": "challenge"
     },
     "parent": "schr0chakram:adventure/full_power",
     "criteria": {
