@@ -12,7 +12,7 @@
     },
     "parent": "schr0chakram:root",
     "criteria": {
-        "schr0chakram_trigger": {
+        "mod_trigger": {
             "trigger": "minecraft:impossible"
         }
     }

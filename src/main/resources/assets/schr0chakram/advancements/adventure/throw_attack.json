@@ -13,7 +13,7 @@
     },
     "parent": "schr0chakram:adventure/throwing",
     "criteria": {
-        "schr0chakram_trigger": {
+        "mod_trigger": {
             "trigger": "minecraft:impossible"
         }
     }

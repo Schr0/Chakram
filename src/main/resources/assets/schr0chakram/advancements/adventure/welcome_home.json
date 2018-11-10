@@ -13,8 +13,11 @@
     },
     "parent": "schr0chakram:adventure/full_power",
     "criteria": {
-        "schr0chakram_trigger": {
+        "mod_trigger": {
             "trigger": "minecraft:impossible"
         }
+    },
+     "rewards": {
+        "experience": 100
     }
 }

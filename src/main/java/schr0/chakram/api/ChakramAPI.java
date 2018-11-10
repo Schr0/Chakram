@@ -8,9 +8,4 @@ public class ChakramAPI
 	 */
 	public static final String MOD_ID = "schr0chakram";
 
-	/**
-	 * Modの名前.
-	 */
-	public static final String MOD_NAME = "Chakram";
-
 }

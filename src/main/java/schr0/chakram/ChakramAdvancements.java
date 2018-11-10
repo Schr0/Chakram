@@ -19,7 +19,7 @@ public class ChakramAdvancements
 
 			if (advancement != null)
 			{
-				playerMP.getAdvancements().grantCriterion(advancement, Chakram.MOD_ID + "_trigger");
+				playerMP.getAdvancements().grantCriterion(advancement, "mod_trigger");
 
 				return true;
 			}

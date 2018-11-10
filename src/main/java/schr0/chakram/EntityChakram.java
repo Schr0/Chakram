@@ -230,7 +230,7 @@ public class EntityChakram extends Entity
 	@Override
 	public void onCollideWithPlayer(EntityPlayer player)
 	{
-		if (this.isReturnOwner() && this.isOwner(player) && this.isServerWorld())
+		if (this.isServerWorld() && this.isReturnOwner() && this.isOwner(player))
 		{
 			this.setDead();
 		}
@@ -299,7 +299,7 @@ public class EntityChakram extends Entity
 		}
 		else
 		{
-			if (!isBreakItemDmage && this.isServerWorld())
+			if (this.isServerWorld() && !isBreakItemDmage)
 			{
 				this.entityDropItem(stack, 0.5F);
 			}
@@ -315,7 +315,7 @@ public class EntityChakram extends Entity
 		{
 			boolean isRestartInterval = (TICKS_INTERVAL <= this.ticksExisted);
 
-			if (isRestartInterval && this.isServerWorld())
+			if (this.isServerWorld() && isRestartInterval)
 			{
 				this.setDead();
 			}
