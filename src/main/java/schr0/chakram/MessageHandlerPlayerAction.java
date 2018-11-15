@@ -27,7 +27,7 @@ public class MessageHandlerPlayerAction implements IMessageHandler<MessagePlayer
 
 			switch (message.getActionType())
 			{
-				default :
+				case ChakramActionTypes.SWING_ARM :
 
 					ｌivingBase.swingArm(ｌivingBase.getActiveHand());
 

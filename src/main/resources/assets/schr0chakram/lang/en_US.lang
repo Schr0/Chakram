@@ -2,4 +2,27 @@
 itemGroup.schr0chakram.item=Chakram : Items
 
 // ======================================== ITEM ===================================== //
-item.chakram_normal.name=Chakram
+item.chakram.name=Chakram
+item.chakram.tooltip=Right click -> Throwing
+
+// ======================================== ADVANCEMENTS ===================================== //
+advancements.schr0chakram.title=Chakram
+advancements.schr0chakram.description=Let's get it.
+
+advancements.schr0chakram.throwing.title=First pitching
+advancements.schr0chakram.throwing.description=Let's throw it.
+
+advancements.schr0chakram.collect_items.title=Collector
+advancements.schr0chakram.collect_items.description=Let's collect items.
+
+advancements.schr0chakram.enchantment_power.title=Powerful Enchantment
+advancements.schr0chakram.enchantment_power.description=Let's enchantment it on [Power].
+
+advancements.schr0chakram.throw_attack.title=Flying "Sharpness" Disc
+advancements.schr0chakram.throw_attack.description=Let's throw it to the Mob.
+
+advancements.schr0chakram.full_power.title=Full Power
+advancements.schr0chakram.full_power.description=PLUS ULTRA !!!
+
+advancements.schr0chakram.welcome_home.title=O KA E RI NA SA I
+advancements.schr0chakram.welcome_home.description=Don't worry.

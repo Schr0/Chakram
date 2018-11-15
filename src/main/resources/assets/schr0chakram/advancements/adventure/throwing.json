@@ -1,0 +1,19 @@
+{
+    "display": {
+        "icon": {
+            "item": "minecraft:arrow"
+        },
+        "title": {
+            "translate": "advancements.schr0chakram.throwing.title"
+        },
+        "description": {
+            "translate": "advancements.schr0chakram.throwing.description"
+        }
+    },
+    "parent": "schr0chakram:root",
+    "criteria": {
+        "mod_trigger": {
+            "trigger": "minecraft:impossible"
+        }
+    }
+}

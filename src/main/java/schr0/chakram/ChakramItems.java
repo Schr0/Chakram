@@ -6,10 +6,12 @@ import com.google.common.collect.Lists;
 
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
@@ -18,24 +20,24 @@ import net.minecraftforge.registries.IForgeRegistry;
 public class ChakramItems
 {
 
-	public static final Item CHAKRAM_NORMAL;
-
-	public static final String NAME_CHAKRAM_NORMAL = "chakram_normal";
+	public static final Item CHAKRAM;
+	public static final String NAME_CHAKRAM = "chakram";
+	public static final Item.ToolMaterial TOOLMATERIAL_CHAKRAM = EnumHelper.addToolMaterial("CHAKRAM", 2, 500, 6.0F, 2.5F, 18).setRepairItem(new ItemStack(Items.IRON_INGOT));
 
 	static
 	{
-		CHAKRAM_NORMAL = new ItemChakramNormal().setUnlocalizedName(NAME_CHAKRAM_NORMAL).setCreativeTab(ChakramCreativeTabs.ITEM);
+		CHAKRAM = new ItemChakram().setUnlocalizedName(NAME_CHAKRAM).setCreativeTab(ChakramCreativeTabs.ITEM);
 	}
 
 	public void registerItems(IForgeRegistry<Item> registry)
 	{
-		registerItem(registry, CHAKRAM_NORMAL, NAME_CHAKRAM_NORMAL);
+		registerItem(registry, CHAKRAM, NAME_CHAKRAM);
 	}
 
 	@SideOnly(Side.CLIENT)
 	public void registerModels()
 	{
-		registerModel(CHAKRAM_NORMAL);
+		registerModel(CHAKRAM);
 	}
 
 	// TODO /* ======================================== MOD START =====================================*/

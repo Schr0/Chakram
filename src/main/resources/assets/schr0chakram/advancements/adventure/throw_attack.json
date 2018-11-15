@@ -1,0 +1,20 @@
+{
+    "display": {
+        "icon": {
+            "item": "minecraft:skull",
+            "data": 2
+        },
+        "title": {
+            "translate": "advancements.schr0chakram.throw_attack.title"
+        },
+        "description": {
+            "translate": "advancements.schr0chakram.throw_attack.description"
+        }
+    },
+    "parent": "schr0chakram:adventure/throwing",
+    "criteria": {
+        "mod_trigger": {
+            "trigger": "minecraft:impossible"
+        }
+    }
+}

@@ -20,7 +20,7 @@ public class ChakramPackets
 	}
 
 	@SideOnly(Side.CLIENT)
-	public void registerClientMessages()
+	public void registerMessagesClient()
 	{
 		DISPATCHER.registerMessage(MessageHandlerPlayerAction.class, MessagePlayerAction.class, ID_PLAYER_ACTION, Side.CLIENT);
 		DISPATCHER.registerMessage(MessageHandlerParticleEntity.class, MessageParticleEntity.class, ID_PARTICLE_ENTITY, Side.CLIENT);

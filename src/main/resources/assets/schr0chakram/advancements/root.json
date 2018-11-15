@@ -1,0 +1,33 @@
+{
+    "display": {
+        "icon": {
+            "item": "schr0chakram:chakram"
+        },
+        "title": {
+            "translate": "advancements.schr0chakram.title"
+        },
+        "description": {
+            "translate": "advancements.schr0chakram.description"
+        },
+            "background": "minecraft:textures/blocks/iron_block.png"
+    },
+    "criteria": {
+        "crafting": {
+            "trigger": "minecraft:recipe_unlocked",
+            "conditions": {
+                "recipe": "schr0chakram:recipe_chakram"
+            }
+        },
+        "get": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [ {
+                    "item": "schr0chakram:chakram"
+                } ]
+            }
+        }
+    },
+    "requirements": [
+        ["crafting", "get"]
+    ]
+}

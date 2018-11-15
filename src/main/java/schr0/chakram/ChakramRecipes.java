@@ -7,11 +7,12 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.registries.IForgeRegistry;
 
+@Deprecated
 public class ChakramRecipes
 {
 
 	public static final String KEY_RES = Chakram.MOD_ID;
-	public static final ResourceLocation RES_CHAKRAM_NORMAL = new ResourceLocation(KEY_RES, "chakram_normal");
+	public static final ResourceLocation RES_CHAKRAM = new ResourceLocation(KEY_RES, ChakramItems.NAME_CHAKRAM);
 
 	public void registerRecipes(IForgeRegistry<IRecipe> registry)
 	{
@@ -22,7 +23,7 @@ public class ChakramRecipes
 
 	private static IRecipe getItemChakramNormal()
 	{
-		return new ShapedOreRecipe(RES_CHAKRAM_NORMAL, new ItemStack(ChakramItems.CHAKRAM_NORMAL), new Object[]
+		return new ShapedOreRecipe(RES_CHAKRAM, new ItemStack(ChakramItems.CHAKRAM), new Object[]
 		{
 				" X ",
 				"XYX",
@@ -32,7 +33,7 @@ public class ChakramRecipes
 				'Y', new ItemStack(Items.ENDER_PEARL),
 				'Z', new ItemStack(Items.LEATHER),
 
-		}).setRegistryName(RES_CHAKRAM_NORMAL);
+		}).setRegistryName(RES_CHAKRAM);
 	}
 
 }

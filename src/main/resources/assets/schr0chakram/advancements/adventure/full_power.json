@@ -1,0 +1,20 @@
+{
+    "display": {
+        "icon": {
+            "item": "minecraft:spectral_arrow"
+        },
+        "title": {
+            "translate": "advancements.schr0chakram.full_power.title"
+        },
+        "description": {
+            "translate": "advancements.schr0chakram.full_power.description"
+        },
+        "frame": "goal"
+    },
+    "parent": "schr0chakram:adventure/enchantment_power",
+    "criteria": {
+        "mod_trigger": {
+            "trigger": "minecraft:impossible"
+        }
+    }
+}

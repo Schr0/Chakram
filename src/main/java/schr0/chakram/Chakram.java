@@ -1,9 +1,7 @@
 package schr0.chakram;
 
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
@@ -38,7 +36,7 @@ public class Chakram
 	/**
 	 * Modのバージョン.
 	 */
-	public static final String MOD_VERSION = "1.0.0";
+	public static final String MOD_VERSION = "2.0.0";
 
 	/**
 	 * ResourceLocationのDomain.
@@ -83,7 +81,7 @@ public class Chakram
 
 		if (event.getSide().isClient())
 		{
-			(new ChakramPackets()).registerClientMessages();
+			(new ChakramPackets()).registerMessagesClient();
 		}
 	}
 
@@ -100,6 +98,7 @@ public class Chakram
 			// none
 		}
 	}
+
 	// TODO /* ======================================== MOD START =====================================*/
 
 	/**
@@ -114,7 +113,7 @@ public class Chakram
 	}
 
 	/**
-	 * Item / Blockモデルの登録.
+	 * Item・Blockモデルの登録.
 	 */
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
@@ -138,17 +137,25 @@ public class Chakram
 	@SubscribeEvent
 	public void registerRecipes(RegistryEvent.Register<IRecipe> event)
 	{
-		IForgeRegistry<IRecipe> registry = event.getRegistry();
-
-		(new ChakramRecipes()).registerRecipes(registry);
+		/* TODO 1.13次第で復帰
+			IForgeRegistry<IRecipe> registry = event.getRegistry();
+		
+			(new ChakramRecipes()).registerRecipes(registry);
+		*/
 	}
 
-	/**
-	 * バグメッセージ.
-	 */
-	public static void infoBugMessage(EntityPlayer player, Class bugClass)
-	{
-		player.sendMessage(new TextComponentString(bugClass + " でバグ発生中！ 楽しく遊んでるのに、ごめんね！ 報告してくれると助かります！"));
-	}
+	/*
+		@SubscribeEvent
+		public void onLivingDamageEvent(LivingDamageEvent event)
+		{
+			EntityLivingBase entity = event.getEntityLiving();
+			DamageSource damageSource = event.getSource();
+	
+			if (damageSource.getTrueSource() instanceof EntityPlayer)
+			{
+				FMLLog.info("Chakram Damage : %f", event.getAmount());
+			}
+		}
+	*/
 
 }

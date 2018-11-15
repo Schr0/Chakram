@@ -1,155 +1,63 @@
 package schr0.chakram;
 
-import com.google.common.collect.Multimap;
+import java.util.List;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
+import javax.annotation.Nullable;
+
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.EnumAction;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public abstract class ItemChakram extends Item
+public class ItemChakram extends ItemSword
 {
 
-	private static final String CHAKRAM_MODIFIER = "Chakram modifier";
-
-	private static final int CHAGE_INTERVAL = 25;
+	private static final int THROWING_INTERVAL = (1 * 20);;
 	private static final int CHAGE_AMOUNT_MIN = 1;
 	private static final int CHAGE_AMOUNT_MAX = 10;
 
-	private final float damageVsEntity;
-	private final int enchantability;
-
-	public ItemChakram(ChakramMaterial material)
+	public ItemChakram()
 	{
-		super();
-		this.maxStackSize = 1;
-		this.setMaxDamage(material.getMaxUses());
-
-		this.damageVsEntity = material.getDamageVsEntity();
-		this.enchantability = material.getEnchantability();
+		super(ChakramItems.TOOLMATERIAL_CHAKRAM);
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public boolean isFull3D()
+	public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn)
 	{
-		return true;
-	}
+		TextComponentTranslation info = new TextComponentTranslation("item.chakram.tooltip", new Object[0]);
 
-	@Override
-	public Multimap<String, AttributeModifier> getAttributeModifiers(EntityEquipmentSlot slot, ItemStack stack)
-	{
-		Multimap<String, AttributeModifier> multimap = super.getAttributeModifiers(slot, stack);
+		info.getStyle().setColor(TextFormatting.BLUE);
+		info.getStyle().setItalic(true);
 
-		if (slot == EntityEquipmentSlot.MAINHAND)
-		{
-			multimap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, CHAKRAM_MODIFIER, (double) this.damageVsEntity, 0));
-		}
-
-		return multimap;
-	}
-
-	@Override
-	public int getItemEnchantability()
-	{
-		return this.enchantability;
+		tooltip.add(info.getFormattedText());
 	}
 
 	@Override
 	public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment)
 	{
-		if (enchantment.type == EnumEnchantmentType.WEAPON)
-		{
-			return true;
-		}
-
 		if (enchantment == Enchantments.POWER)
 		{
 			return true;
 		}
 
 		return super.canApplyAtEnchantingTable(stack, enchantment);
-	}
-
-	@Override
-	public boolean canDestroyBlockInCreative(World world, BlockPos pos, ItemStack stack, EntityPlayer player)
-	{
-		return false;
-	}
-
-	@Override
-	public float getStrVsBlock(ItemStack stack, IBlockState state)
-	{
-		Block block = state.getBlock();
-
-		if (block == Blocks.WEB)
-		{
-			return 15.0F;
-		}
-
-		Material material = state.getMaterial();
-
-		if ((material == Material.PLANTS) || (material == Material.VINE) || (material == Material.CORAL) || (material == Material.LEAVES) || (material == Material.GOURD))
-		{
-			return 1.5F;
-		}
-
-		return 1.0F;
-	}
-
-	@Override
-	public boolean canHarvestBlock(IBlockState blockIn)
-	{
-		return (blockIn.getBlock() == Blocks.WEB);
-	}
-
-	@Override
-	public boolean onBlockDestroyed(ItemStack stack, World worldIn, IBlockState state, BlockPos pos, EntityLivingBase entityLiving)
-	{
-		if ((double) state.getBlockHardness(worldIn, pos) != 0.0D)
-		{
-			if (!worldIn.isRemote)
-			{
-				stack.damageItem(2, entityLiving);
-			}
-
-			return true;
-		}
-
-		return false;
-	}
-
-	@Override
-	public boolean hitEntity(ItemStack stack, EntityLivingBase target, EntityLivingBase attacker)
-	{
-		if (!attacker.world.isRemote)
-		{
-			stack.damageItem(1, attacker);
-		}
-
-		return true;
 	}
 
 	@Override
@@ -187,10 +95,9 @@ public abstract class ItemChakram extends Item
 		if ((0 < usingCount) && (usingCount % 20 == 0))
 		{
 			EntityPlayer entityPlayer = (EntityPlayer) player;
+			int chageAmmount = this.getChageAmmount(stack, usingCount);
 
-			entityPlayer.addExhaustion(0.15F);
-
-			int chageAmmount = this.getChageAmmount(EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, stack), usingCount);
+			entityPlayer.addExhaustion(0.1F);
 
 			if (chageAmmount == CHAGE_AMOUNT_MAX)
 			{
@@ -216,42 +123,61 @@ public abstract class ItemChakram extends Item
 		}
 
 		EntityPlayer player = (EntityPlayer) entityLiving;
-
 		int usingCount = this.getUsingCount(stack, timeLeft);
-		int chageAmmount = this.getChageAmmount(EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, stack), usingCount);
+		int chageAmmount = this.getChageAmmount(stack, usingCount);
 		EntityChakram entityChakram = new EntityChakram(worldIn, player, stack, chageAmmount);
 
 		entityChakram.setHeadingFromOwner(player);
 
+		entityChakram.setReturnOffHand(ItemStack.areItemStacksEqual(stack, player.getHeldItemOffhand()));
+
 		worldIn.spawnEntity(entityChakram);
 
-		player.getCooldownTracker().setCooldown(this, CHAGE_INTERVAL);
+		player.addExhaustion(0.20F);
+
+		player.getCooldownTracker().setCooldown(this, THROWING_INTERVAL);
 
 		player.addStat(StatList.getObjectUseStats(this));
-
-		player.addExhaustion(0.20F);
 
 		player.inventory.deleteStack(stack);
 
 		ChakramPackets.DISPATCHER.sendToAll(new MessagePlayerAction(player, ChakramActionTypes.SWING_ARM));
 
 		worldIn.playSound(null, player.posX, player.posY, player.posZ, SoundEvents.ENTITY_EGG_THROW, SoundCategory.PLAYERS, 0.5F, 0.4F / (worldIn.rand.nextFloat() * 0.4F + 0.8F));
+
+		ChakramAdvancements.completeThrowing(player);
+
+		if (isFullPower(chageAmmount, stack))
+		{
+			ChakramAdvancements.completeFullPower(player);
+		}
 	}
 
-	// TODO /* ======================================== MOD START =====================================*/
+	// TODO /* ======================================== MOD START // =====================================*/
 
-	public int getUsingCount(ItemStack stack, int timeLeft)
+	public int getUsingCount(ItemStack stack, int tickCount)
 	{
-		return (this.getMaxItemUseDuration(stack) - timeLeft);
+		return (this.getMaxItemUseDuration(stack) - tickCount);
 	}
 
-	public int getChageAmmount(int powerLevel, int usingCount)
+	public int getChageAmmount(ItemStack stack, int usingCount)
 	{
+		int powerLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, stack);
 		int chageAmount = powerLevel + (usingCount / 20);
 		chageAmount = Math.min(chageAmount, CHAGE_AMOUNT_MAX);
 		chageAmount = Math.max(chageAmount, CHAGE_AMOUNT_MIN);
 
 		return chageAmount;
+	}
+
+	private static boolean isFullPower(int chageAmmount, ItemStack stack)
+	{
+		if (CHAGE_AMOUNT_MAX <= chageAmmount)
+		{
+			return (EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, stack) == Enchantments.POWER.getMaxLevel());
+		}
+
+		return false;
 	}
 
 }

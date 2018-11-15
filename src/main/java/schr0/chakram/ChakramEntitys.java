@@ -14,13 +14,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class ChakramEntitys
 {
 
-	private static final Minecraft MINECRAFT = Minecraft.getMinecraft();
+	public static final String NAME_CHAKRAM = ChakramItems.NAME_CHAKRAM;
+	public static final int ID_CHAKRAM = 0;
 	public static final int TRACKING_RANGE = 250;
 	public static final int UPDATE_FREQUENCY = 1;
 	public static final boolean SENDS_VELOCITY_UPDATES = true;
-
-	public static final String NAME_CHAKRAM = "chakram";
-	public static final int ID_CHAKRAM = 0;
 
 	public void registerEntitys()
 	{
@@ -30,12 +28,14 @@ public class ChakramEntitys
 	@SideOnly(Side.CLIENT)
 	public void registerRenders()
 	{
+		Minecraft mc = Minecraft.getMinecraft();
+
 		RenderingRegistry.registerEntityRenderingHandler(EntityChakram.class, new IRenderFactory()
 		{
 			@Override
 			public Render createRenderFor(RenderManager renderManager)
 			{
-				return new RenderChakram(renderManager, MINECRAFT.getRenderItem());
+				return new RenderChakram(renderManager, mc.getRenderItem());
 			}
 		});
 	}

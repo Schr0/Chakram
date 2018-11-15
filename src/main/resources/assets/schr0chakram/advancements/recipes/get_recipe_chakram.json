@@ -1,0 +1,53 @@
+{
+    "parent": "minecraft:recipes/root",
+    "criteria": {
+        "iron_ingot": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                            {
+                                "item": "minecraft:iron_ingot"
+                            }
+                ]
+            }
+        },
+        "ender_pearl": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                            {
+                                "item": "minecraft:ender_pearl"
+                            }
+                ]
+            }
+        },
+        "leather": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                            {
+                                "item": "minecraft:leather"
+                            }
+                ]
+            }
+        },
+        "chakram": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                            {
+                                "item": "schr0chakram:chakram"
+                            }
+                ]
+            }
+        }
+     },
+    "requirements": [
+        ["iron_ingot", "ender_pearl", "leather", "chakram"]
+    ],
+    "rewards": {
+        "recipes": [
+            "schr0chakram:recipe_chakram"
+        ]
+    }
+}
