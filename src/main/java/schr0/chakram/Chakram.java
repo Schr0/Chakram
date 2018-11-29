@@ -1,7 +1,6 @@
 package schr0.chakram;
 
 import net.minecraft.item.Item;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
@@ -36,7 +35,7 @@ public class Chakram
 	/**
 	 * Modのバージョン.
 	 */
-	public static final String MOD_VERSION = "2.0.0";
+	public static final String MOD_VERSION = "2.0.1";
 
 	/**
 	 * ResourceLocationのDomain.
@@ -129,19 +128,6 @@ public class Chakram
 	public void registerEntitys(RegistryEvent.Register<EntityEntry> event)
 	{
 		(new ChakramEntitys()).registerEntitys();
-	}
-
-	/**
-	 * Recipeの登録.
-	 */
-	@SubscribeEvent
-	public void registerRecipes(RegistryEvent.Register<IRecipe> event)
-	{
-		/* TODO 1.13次第で復帰
-			IForgeRegistry<IRecipe> registry = event.getRegistry();
-		
-			(new ChakramRecipes()).registerRecipes(registry);
-		*/
 	}
 
 	/*
