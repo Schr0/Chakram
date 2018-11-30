@@ -71,6 +71,8 @@ public class RenderChakram extends Render<EntityChakram>
 		return TextureMap.LOCATION_BLOCKS_TEXTURE;
 	}
 
+	// TODO /* ======================================== MOD START =====================================*/
+
 	private static float getRotationaSpeed(float ticks)
 	{
 		return (ticks * 100);

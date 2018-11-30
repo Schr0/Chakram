@@ -16,9 +16,10 @@ public class ChakramEntitys
 
 	public static final String NAME_CHAKRAM = ChakramItems.NAME_CHAKRAM;
 	public static final int ID_CHAKRAM = 0;
-	public static final int TRACKING_RANGE = 250;
-	public static final int UPDATE_FREQUENCY = 1;
-	public static final boolean SENDS_VELOCITY_UPDATES = true;
+
+	private static final int TRACKING_RANGE = 250;
+	private static final int UPDATE_FREQUENCY = 1;
+	private static final boolean SENDS_VELOCITY_UPDATES = true;
 
 	public void registerEntitys()
 	{

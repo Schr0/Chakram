@@ -8,25 +8,7 @@ import net.minecraft.util.ResourceLocation;
 public class ChakramAdvancements
 {
 
-	public static final String RES_KEY = Chakram.MOD_ID;
-
-	public static boolean complete(EntityPlayer player, ResourceLocation key)
-	{
-		if (player instanceof EntityPlayerMP)
-		{
-			EntityPlayerMP playerMP = (EntityPlayerMP) player;
-			Advancement advancement = playerMP.getServer().getAdvancementManager().getAdvancement(key);
-
-			if (advancement != null)
-			{
-				playerMP.getAdvancements().grantCriterion(advancement, "mod_trigger");
-
-				return true;
-			}
-		}
-
-		return false;
-	}
+	private static final String RES_KEY = Chakram.MOD_ID;
 
 	public static boolean completeThrowing(EntityPlayer player)
 	{
@@ -61,6 +43,24 @@ public class ChakramAdvancements
 		ResourceLocation key = new ResourceLocation(RES_KEY, "adventure/welcome_home");
 
 		return complete(player, key);
+	}
+
+	private static boolean complete(EntityPlayer player, ResourceLocation key)
+	{
+		if (player instanceof EntityPlayerMP)
+		{
+			EntityPlayerMP playerMP = (EntityPlayerMP) player;
+			Advancement advancement = playerMP.getServer().getAdvancementManager().getAdvancement(key);
+
+			if (advancement != null)
+			{
+				playerMP.getAdvancements().grantCriterion(advancement, "mod_trigger");
+
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 }
